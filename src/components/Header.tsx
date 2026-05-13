@@ -6,9 +6,9 @@ interface HeaderProps {
 }
 
 const NavItem = ({ href, children }: { href: string, children: React.ReactNode }) => (
-  <a 
-    href={href} 
-    className="text-slate-500 font-medium hover:text-blue-600 transition-all hover:translate-x-0.5 active:scale-95 px-2 py-1"
+  <a
+    href={href}
+    className="text-slate-600 font-medium px-2 py-1 transition-colors hover:text-blue-600 active:scale-95"
   >
     {children}
   </a>
@@ -43,8 +43,8 @@ export const Header: React.FC<HeaderProps> = () => {
             <div className="h-8 w-[1px] bg-slate-200"></div>
             <div className="text-right">
               <div className="flex flex-col gap-0.5">
-                <a href="tel:+79790314508" className="text-sm font-bold hover:text-blue-600 transition-all hover:scale-105 inline-block">+7 (979) 031-45-08</a>
-                <a href="tel:+79785435383" className="text-sm font-bold hover:text-blue-600 transition-all hover:scale-105 inline-block">+7 (978) 543-53-83</a>
+                <a href="tel:+79790314508" className="text-sm font-bold text-slate-900 hover:text-blue-600 transition-colors inline-block">+7 (979) 031-45-08</a>
+                <a href="tel:+79785435383" className="text-sm font-bold text-slate-900 hover:text-blue-600 transition-colors inline-block">+7 (978) 543-53-83</a>
               </div>
             </div>
           </div>
