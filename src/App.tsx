@@ -5,24 +5,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  Phone, 
-  Send, 
-  CheckCircle2, 
-  Hammer, 
-  Clock, 
-  MapPin, 
-  Menu, 
-  X, 
+import {
+  Send,
+  Hammer,
+  Clock,
   Star,
   Zap,
   ShieldCheck,
-  Thermometer,
-  Wrench,
-  Settings,
-  Flame,
-  Droplets,
-  Search,
   ChevronLeft,
   ChevronRight,
   ChevronDown
@@ -55,7 +44,7 @@ const INTERACTIVE_SERVICES = [
       { name: 'Монтаж - демонтаж', price: '4000' },
       { name: 'Замена термостата', price: '2500' }
     ],
-    image: '/assets/бойлер.jpg'
+    image: '/assets/boiler.webp'
   },
   {
     id: 'washing',
@@ -68,7 +57,7 @@ const INTERACTIVE_SERVICES = [
       { name: 'Замена манжеты', price: '3500' },
       { name: 'Ремонт / замена мотора', price: '4000' }
     ],
-    image: '/assets/стиральная машина.jpg'
+    image: '/assets/washing.webp'
   },
   {
     id: 'gas-boiler',
@@ -81,7 +70,7 @@ const INTERACTIVE_SERVICES = [
       { name: 'Промывка теплообменника', price: '5000' },
       { name: 'Замена расширительного бака', price: '5000' }
     ],
-    image: '/assets/котел.jpg'
+    image: '/assets/kotel.webp'
   },
   {
     id: 'column',
@@ -93,7 +82,7 @@ const INTERACTIVE_SERVICES = [
       { name: 'Техническое обслуживание', price: '3500' },
       { name: 'Замена газового клапана', price: '3000' }
     ],
-    image: '/assets/колонка.jpeg'
+    image: '/assets/kolonka.webp'
   },
   {
     id: 'ac',
@@ -104,7 +93,7 @@ const INTERACTIVE_SERVICES = [
       { name: 'Чистка внутреннего блока', price: '3500' },
       { name: 'Заправка фреоном', price: '3500' }
     ],
-    image: '/assets/кондиционер.jpg'
+    image: '/assets/konditsioner.webp'
   },
   {
     id: 'cleaning',
@@ -116,7 +105,7 @@ const INTERACTIVE_SERVICES = [
       { name: 'Генеральная уборка', price: 'по договоренности' },
       { name: 'Мытьё окон', price: 'по договоренности' }
     ],
-    image: '/assets/cleaning.jpg'
+    image: '/assets/cleaning.webp'
   }
 ];
 
@@ -163,6 +152,16 @@ export default function App() {
     if (typeof window !== 'undefined' && window.innerWidth >= 1024 && activeServiceIndex === -1) {
       setActiveServiceIndex(0);
     }
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      INTERACTIVE_SERVICES.forEach(({ image }) => {
+        const img = new Image();
+        img.src = image;
+      });
+    }, 800);
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -214,61 +213,6 @@ export default function App() {
       setIsSubmitting(false);
     }
     return;
-
-    setIsSubmitting(true);
-
-    const webhookUrl = import.meta.env.VITE_GOOGLE_SHEETS_WEBHOOK_URL;
-    const tgToken = import.meta.env.VITE_TELEGRAM_BOT_TOKEN;
-    const tgChatId = import.meta.env.VITE_TELEGRAM_CHAT_ID;
-    
-    // Отправка в Google Sheets
-    if (webhookUrl) {
-      try {
-        await fetch(webhookUrl, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            ...formData,
-            timestamp: new Date().toLocaleString(),
-            source: 'Site Modal'
-          }),
-        });
-      } catch (error) {
-        console.error('Error sending lead to Sheets:', error);
-      }
-    }
-
-    // Отправка в Telegram
-    if (tgToken && tgChatId) {
-      try {
-        const message = `🚀 *Новая заявка!*\n\n👤 *Имя:* ${formData.name}\n📞 *Телефон:* ${formData.phone}\n🛠 *Проблема:* ${formData.problem || 'Не указана'}\n\n📍 *Откуда:* Сайт (Попап)`;
-        await fetch(`https://api.telegram.org/bot${tgToken}/sendMessage`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            chat_id: tgChatId,
-            text: message,
-            parse_mode: 'Markdown'
-          }),
-        });
-      } catch (error) {
-        console.error('Error sending lead to Telegram:', error);
-      }
-    }
-
-    if (!webhookUrl && (!tgToken || !tgChatId)) {
-      // Имитация для демо, если ничего не задано
-      await new Promise(resolve => setTimeout(resolve, 1500));
-    }
-
-    setIsSubmitting(false);
-    setIsSubmitted(true);
-    setTimeout(() => {
-      setIsModalOpen(false);
-      setIsSubmitted(false);
-      setFormData({ name: '', phone: '', problem: '' });
-    }, 2000);
   };
 
   const handleAddressCheck = (e: React.FormEvent) => {
@@ -304,38 +248,8 @@ export default function App() {
           <div className="absolute inset-0 pointer-events-none overflow-hidden select-none">
             {/* Grid Pattern */}
             <div className="absolute inset-0 bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] bg-[size:60px_60px] opacity-[0.4]" />
-            
-            <motion.div 
-              animate={{ y: [0, -20, 0], rotate: [0, 5, 0] }}
-              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute top-20 left-[5%] opacity-[0.02] text-blue-600 hidden lg:block"
-            >
-              <Wrench size={180} strokeWidth={0.5} />
-            </motion.div>
-            <motion.div 
-              animate={{ y: [0, 25, 0], rotate: [0, -8, 0] }}
-              transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-              className="absolute bottom-10 right-[5%] opacity-[0.02] text-blue-600 hidden lg:block"
-            >
-              <Settings size={220} strokeWidth={0.5} />
-            </motion.div>
-            <motion.div 
-              animate={{ x: [0, 15, 0], y: [0, 10, 0] }}
-              transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-              className="absolute top-1/2 left-[2%] opacity-[0.01] text-blue-600 hidden xl:block"
-            >
-              <Hammer size={130} strokeWidth={0.5} />
-            </motion.div>
-            <motion.div 
-              animate={{ scale: [1, 1.05, 1], opacity: [0.02, 0.04, 0.02] }}
-              transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute -top-32 -right-32 w-[500px] h-[500px] bg-blue-100 rounded-full blur-[120px]"
-            />
-            <motion.div 
-              animate={{ scale: [1, 1.1, 1], opacity: [0.01, 0.03, 0.01] }}
-              transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-              className="absolute -bottom-32 -left-32 w-[400px] h-[400px] bg-blue-50 rounded-full blur-[100px]"
-            />
+            <div className="absolute -top-32 -right-32 w-[500px] h-[500px] bg-blue-100 rounded-full blur-[120px] opacity-[0.03]" />
+            <div className="absolute -bottom-32 -left-32 w-[400px] h-[400px] bg-blue-50 rounded-full blur-[100px] opacity-[0.02]" />
           </div>
 
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -370,7 +284,7 @@ export default function App() {
                   transition={{ delay: 0.3 }}
                   className="flex flex-col items-center"
                 >
-                  <div className="flex flex-col sm:flex-row gap-2 justify-center items-center sm:items-start w-full">
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center items-center sm:items-start w-full">
                     <div className="flex flex-col items-center gap-2 w-full sm:w-auto">
                       <button 
                         onClick={() => setIsModalOpen(true)}
@@ -514,10 +428,12 @@ export default function App() {
                             <div className="py-6 space-y-6">
                               {/* Mobile Image (hidden on desktop) */}
                               <div className="lg:hidden relative rounded-xl overflow-hidden aspect-video shadow-md">
-                                <img 
-                                  src={service.image} 
+                                <img
+                                  src={service.image}
                                   alt={service.name}
                                   className="w-full h-full object-cover"
+                                  loading="lazy"
+                                  decoding="async"
                                 />
                               </div>
                               <div className="space-y-4">
@@ -562,10 +478,12 @@ export default function App() {
                           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                           className="absolute inset-0"
                         >
-                          <img 
-                            src={INTERACTIVE_SERVICES[activeServiceIndex].image} 
+                          <img
+                            src={INTERACTIVE_SERVICES[activeServiceIndex].image}
                             alt={INTERACTIVE_SERVICES[activeServiceIndex].name}
                             className="w-full h-full object-cover"
+                            loading="lazy"
+                            decoding="async"
                           />
                         </motion.div>
                       </AnimatePresence>
