@@ -7,6 +7,7 @@ interface LeadModalProps {
   onClose: () => void;
   isSubmitted: boolean;
   isSubmitting: boolean;
+  submitError: string;
   formData: { name: string; phone: string; problem: string };
   onFormChange: (data: { name: string; phone: string; problem: string }) => void;
   onSubmit: (e: React.FormEvent) => void;
@@ -17,6 +18,7 @@ export const LeadModal: React.FC<LeadModalProps> = ({
   onClose,
   isSubmitted,
   isSubmitting,
+  submitError,
   formData,
   onFormChange,
   onSubmit
@@ -118,6 +120,11 @@ export const LeadModal: React.FC<LeadModalProps> = ({
                       'Отправить заявку'
                     )}
                   </button>
+                  {submitError && (
+                    <p className="text-sm text-red-600 text-center leading-snug px-3">
+                      {submitError}
+                    </p>
+                  )}
                   <p className="text-[10px] text-slate-400 text-center px-4 leading-normal mt-4">
                     Нажимая на кнопку, вы соглашаетесь с политикой конфиденциальности и обработки персональных данных.
                   </p>

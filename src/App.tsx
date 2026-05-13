@@ -144,6 +144,7 @@ export default function App() {
   const [formData, setFormData] = useState({ name: '', phone: '', problem: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState('');
   const [activeServiceIndex, setActiveServiceIndex] = useState(() => 
     typeof window !== 'undefined' && window.innerWidth < 1024 ? -1 : 0
   );
@@ -181,6 +182,39 @@ export default function App() {
 
   const handleModalSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitError('');
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch('/api/lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json().catch(() => null);
+      if (!response.ok || !result?.ok) {
+        throw new Error(result?.error || 'Не удалось отправить заявку.');
+      }
+
+      setIsSubmitted(true);
+      setTimeout(() => {
+        setIsModalOpen(false);
+        setIsSubmitted(false);
+        setFormData({ name: '', phone: '', problem: '' });
+      }, 2000);
+    } catch (error) {
+      console.error('Error submitting lead:', error);
+      setSubmitError(
+        error instanceof Error
+          ? error.message
+          : 'Не удалось отправить заявку. Попробуйте ещё раз или позвоните нам.',
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+    return;
+
     setIsSubmitting(true);
 
     const webhookUrl = import.meta.env.VITE_GOOGLE_SHEETS_WEBHOOK_URL;
@@ -254,6 +288,7 @@ export default function App() {
         onClose={() => setIsModalOpen(false)}
         isSubmitted={isSubmitted}
         isSubmitting={isSubmitting}
+        submitError={submitError}
         formData={formData}
         onFormChange={setFormData}
         onSubmit={handleModalSubmit}
